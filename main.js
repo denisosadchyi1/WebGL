@@ -8,6 +8,15 @@ let rotateBall; // object for rotate the view by mouse.
 function numToRad(angle) {
   return (angle * Math.PI) / 180;
 }
+
+const R = 1;
+const m = 1;
+const n = 1;
+
+const x = (r, B) => r * Math.cos(B);
+const y = (r, B) => r * Math.sin(B);
+const z = (r) => m * Math.cos((n * Math.PI * r) / R);
+
 // initialize Model
 function Model(name) {
   this.name = name;
@@ -61,7 +70,7 @@ function draw() {
   const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
 
   /* Set the values of the projection transformation */
-  let projection = m4.perspective(Math.PI / 8, aspect, 8, 12);
+  let projection = m4.perspective(Math.PI / 2, aspect, 1, 2000);
 
   /* Get the view matrix from the ratator object.*/
   let modelView = rotateBall.getViewMatrix();
@@ -89,16 +98,31 @@ function draw() {
 }
 
 function CreateSurfaceData() {
-  let vertexList = [];
+  let vertexCircles = [];
 
-  for (let i = 0; i < 360; i += 5) {
-    vertexList.push(Math.sin(numToRad(i)), 1, Math.cos(numToRad(i)));
-    vertexList.push(Math.sin(numToRad(i)), 0, Math.cos(numToRad(i)));
+  for (let r = 0; r <= 7; r += Math.PI / 8) {
+    let vertexCircle = [];
+    for (let B = 0; B <= 2 * Math.PI; B += Math.PI / 50) {
+      vertexCircle.push([x(r, B), y(r, B), z(r)]);
+    }
+    vertexCircles.push(vertexCircle);
   }
 
-  return vertexList;
-}
+  let vertixLines = vertexCircles[0].map((col, i) =>
+    vertexCircles.map((row) => row[i])
+  );
 
+  vertixLines = vertixLines.map((vertexLine) => [
+    ...vertexLine,
+    ...vertexLine.slice().reverse(),
+  ]);
+  vertexCircles = vertexCircles.map((vertexCircle) => [
+    ...vertexCircle,
+    ...vertexCircle.slice().reverse(),
+  ]);
+
+  return [...vertixLines.flat(Infinity), ...vertexCircles.flat(Infinity)];
+}
 /* Initialize the WebGL context. Called from init() */
 function initGL() {
   let prog = createProgram(gl, vertexShaderSource, fragmentShaderSource);
