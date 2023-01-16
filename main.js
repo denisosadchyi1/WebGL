@@ -1,5 +1,3 @@
-// import { numToRad } from "./Utils/numToRad";
-
 let gl; // The webgl context.
 let surface; // surface model
 let shaderProgram; // shader program
