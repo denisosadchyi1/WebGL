@@ -96,9 +96,7 @@ function draw() {
 
   /* Get the view matrix from the ratator object.*/
   let modelView = rotateBall.getViewMatrix();
-  let rotateToPointZero = m4.axisRotation([0, 0, 1], 0.7);
-
-  //   let rotateToPointZero = m4.axisRotation([0.707, 0.707, 0], 0.7);
+  let rotateToPointZero = m4.axisRotation([0, 0, 1], 0.5);
   let translateToPointZero = m4.translation(0, 0, -10);
 
   let accum0 = m4.multiply(rotateToPointZero, modelView);
@@ -130,9 +128,6 @@ function draw() {
     false,
     modelViewProjection
   );
-
-  /* Draw the six faces of a cube, with different colors. */
-  //   gl.uniform4fv(shaderProgram.iColor, [0, 1, 1, 1]);
 
   surface.Draw();
 }
@@ -254,28 +249,28 @@ function init() {
 window.addEventListener("keydown", function (event) {
   switch (event.keyCode) {
     case 37:
-      left();
+      handleChangeLeft();
     case 39:
-      right();
+      handleChangeRight();
       break;
     default:
       return;
   }
 });
 
-const left = () => {
+const lightCoordinates = () => {
+  let coord = Math.sin(position) * 1.1;
+  return [coord, -2, coord * coord];
+};
+
+const handleChangeLeft = () => {
   position -= 0.07;
   reDraw();
 };
 
-const right = () => {
+const handleChangeRight = () => {
   position += 0.07;
   reDraw();
-};
-
-const lightCoordinates = () => {
-  let coord = Math.sin(position) * 1.1;
-  return [coord, -2, coord * coord];
 };
 
 const reDraw = () => {
